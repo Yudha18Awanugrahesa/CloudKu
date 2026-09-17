@@ -1,0 +1,7 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Latar belakang kotak lengkung (Rounded Square) -->
+  <rect width="128" height="128" rx="32" fill="#0F4C3A"/>
+  
+  <!-- Ikon garis minimalis bentuk awan -->
+  <path d="M42 78H86C93.732 78 100 71.732 100 64C100 56.689 94.349 50.672 87.164 50.053C85.597 39.467 76.516 31 65.5 31C55.779 31 47.619 37.986 45.426 47.332C38.995 48.077 34 53.522 34 60C34 69.941 42.059 78 52 78H42Z" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
