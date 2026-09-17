@@ -8,12 +8,12 @@ import { formatIDR, fmtDateShort, todayISO } from '../lib/format';
 import { INCOME_CATEGORIES, EXPENSE_CATEGORIES, METHODS } from '../lib/categories';
 
 function TransactionForm({ initial, onSave, onClose }) {
-  const [type, setType] = useState(initial?.type || 'pengeluaran');
+  const [type, setType] = useState(initial?.type || '');
   const [date, setDate] = useState(initial?.date || todayISO());
   const [category, setCategory] = useState(initial?.category || '');
-  const [nominal, setNominal] = useState(initial?.nominal ?? '');
+  const [nominal, setNominal] = useState(initial?.nominal ?? '0');
   const [description, setDescription] = useState(initial?.description || '');
-  const [method, setMethod] = useState(initial?.method || 'Cash');
+  const [method, setMethod] = useState(initial?.method || '');
   const [note, setNote] = useState(initial?.note || '');
   const [err, setErr] = useState('');
   const cats = type === 'pemasukan' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
