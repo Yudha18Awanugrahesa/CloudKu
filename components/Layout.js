@@ -57,7 +57,7 @@ export default function Layout({ children }) {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar Desktop (Sticky agar tidak ikut scroll ke bawah) */}
-      <aside className="hidden md:flex w-60 flex-shrink-0 bg-primary-dark flex-col h-screen sticky top-0">
+      <aside className="hidden md:flex w-60 flex-shrink-0 bg-primary-dark flex-col h-screen sticky top-0 shadow-xl">
         <div className="flex items-center gap-2 px-5 py-5">
           <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center">
             <Cloud size={16} color="#fff" />
@@ -72,15 +72,21 @@ export default function Layout({ children }) {
               <Link
                 key={n.href}
                 href={n.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm ${active ? "bg-white/15 text-white font-bold" : "text-white/70 hover:bg-white/10"}`}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
+                  active
+                    ? "bg-white/25 text-white font-bold shadow-md translate-x-1"
+                    : "text-white/70 hover:bg-white/10 hover:text-white hover:translate-x-1"
+                }`}
               >
                 <Icon size={17} /> {n.label}
               </Link>
             );
           })}
         </nav>
-        <div className="p-3.5 border-t border-white/10 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-white/15 overflow-hidden flex items-center justify-center flex-shrink-0">
+
+        {/* Bagian Bawah (Profil & Logout) Dibuat Timbul & Interaktif */}
+        <div className="p-3 m-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 shadow-lg flex items-center gap-2.5 transition-all duration-200 hover:bg-white/15 hover:shadow-xl hover:scale-[1.02]">
+          <div className="w-8 h-8 rounded-full bg-white/20 overflow-hidden flex items-center justify-center flex-shrink-0 ring-2 ring-white/20">
             {profile?.avatar_url ? (
               <img
                 src={profile.avatar_url}
@@ -98,7 +104,8 @@ export default function Layout({ children }) {
           </div>
           <button
             onClick={() => signOut()}
-            className="text-white/70 hover:text-white"
+            title="Keluar"
+            className="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/20 transition-all duration-150 active:scale-95"
           >
             <LogOut size={16} />
           </button>
