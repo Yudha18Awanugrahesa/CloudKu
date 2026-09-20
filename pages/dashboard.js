@@ -120,10 +120,12 @@ export default function Dashboard() {
         <p className="text-sm text-gray-400">Memuat data...</p>
       ) : (
         <>
-          {/* Sapaan Username Eksklusif di Dashboard */}
+          {/* Sapaan Username dengan dukungan Dark Mode yang jelas */}
           <div className="mb-6">
-            <div className="text-xs text-gray-500">Halo,</div>
-            <div className="text-2xl font-extrabold text-gray-900">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Halo,
+            </div>
+            <div className="text-2xl font-extrabold text-gray-900 dark:text-white drop-shadow-sm">
               {displayName} 👋
             </div>
           </div>
@@ -170,11 +172,11 @@ export default function Dashboard() {
 
           <div className="mb-5">
             {sisaCashflow >= 0 ? (
-              <div className="flex items-center gap-2 bg-primary-soft text-primary px-3.5 py-2.5 rounded-lg text-sm font-bold">
+              <div className="flex items-center gap-2 bg-primary-soft dark:bg-emerald-950/60 text-primary dark:text-emerald-300 px-3.5 py-2.5 rounded-lg text-sm font-bold border border-emerald-500/20">
                 <CheckCircle2 size={16} /> Kondisi keuangan bulan ini Surplus.
               </div>
             ) : (
-              <div className="flex items-center gap-2 bg-danger-soft text-danger px-3.5 py-2.5 rounded-lg text-sm font-bold">
+              <div className="flex items-center gap-2 bg-danger-soft dark:bg-red-950/60 text-danger dark:text-red-300 px-3.5 py-2.5 rounded-lg text-sm font-bold border border-red-500/20">
                 <AlertTriangle size={16} /> Kondisi keuangan bulan ini Defisit.
               </div>
             )}
@@ -182,7 +184,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 mb-5">
             <div className="card p-4">
-              <div className="text-sm font-bold mb-2">
+              <div className="text-sm font-bold mb-2 text-gray-800 dark:text-gray-200">
                 Cash Flow — 14 Hari Terakhir
               </div>
               <ResponsiveContainer width="100%" height={220}>
@@ -246,7 +248,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
             <div className="card p-4">
-              <div className="text-sm font-bold mb-2">
+              <div className="text-sm font-bold mb-2 text-gray-800 dark:text-gray-200">
                 Pengeluaran per Kategori
               </div>
               {byCategory.length === 0 ? (
@@ -279,7 +281,9 @@ export default function Dashboard() {
           </div>
 
           <div className="card p-4">
-            <div className="text-sm font-bold mb-2">Transaksi Terbaru</div>
+            <div className="text-sm font-bold mb-2 text-gray-800 dark:text-gray-200">
+              Transaksi Terbaru
+            </div>
             {recent.length === 0 ? (
               <p className="text-sm text-gray-400 py-6 text-center">
                 Belum ada transaksi.
@@ -288,10 +292,10 @@ export default function Dashboard() {
               recent.map((t) => (
                 <div
                   key={t.id}
-                  className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0"
+                  className="flex items-center justify-between py-2.5 border-b border-gray-100 dark:border-gray-800 last:border-0"
                 >
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold truncate">
+                    <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                       {t.description || t.category}
                     </div>
                     <div className="text-xs text-gray-400">
@@ -299,7 +303,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div
-                    className={`font-bold text-sm flex-shrink-0 ${t.type === "pemasukan" ? "text-primary" : "text-danger"}`}
+                    className={`font-bold text-sm flex-shrink-0 ${t.type === "pemasukan" ? "text-primary dark:text-emerald-400" : "text-danger dark:text-red-400"}`}
                   >
                     {t.type === "pemasukan" ? "+" : "-"}
                     {formatIDR(t.nominal)}

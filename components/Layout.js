@@ -31,7 +31,6 @@ export default function Layout({ children }) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
 
-  // Ambil cache profil dari localStorage agar langsung ada saat render pertama
   const [profile, setProfile] = useState(() => {
     if (typeof window !== "undefined") {
       const cached = localStorage.getItem("user_profile_cache");
@@ -68,15 +67,20 @@ export default function Layout({ children }) {
       .then(({ data }) => {
         if (data) {
           setProfile(data);
-          // Simpan ke localStorage agar tidak kedip saat ganti halaman
           localStorage.setItem("user_profile_cache", JSON.stringify(data));
+          if (data.theme) {
+            document.documentElement.classList.toggle(
+              "dark",
+              data.theme === "dark",
+            );
+          }
         }
       });
   }, [user]);
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400 text-sm">
+      <div className="min-h-screen flex items-center justify-center text-gray-400 text-sm dark:bg-gray-900">
         Memuat...
       </div>
     );
@@ -85,17 +89,20 @@ export default function Layout({ children }) {
   const displayName = profile?.username || user.email?.split("@")[0];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       {/* Sidebar Desktop */}
       <aside
-        className={`hidden md:flex flex-col h-screen sticky top-0 bg-[#064e3b] text-white shadow-2xl transition-all duration-300 ease-in-out z-30 ${
+        className={`hidden md:flex flex-col h-screen sticky top-0 bg-[#064e3b] dark:bg-[#0b1915] text-white shadow-2xl transition-all duration-300 ease-in-out z-30 border-r border-emerald-900/20 dark:border-white/5 ${
           isCollapsed ? "w-20" : "w-64"
         }`}
       >
-        {/* Header Logo */}
+        {/* Header Logo dengan Efek Glow */}
         <div className="flex items-center gap-3 px-5 py-6 border-b border-white/10 overflow-hidden whitespace-nowrap">
-          <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-md">
-            <Cloud size={22} className="text-white" />
+          <div className="w-10 h-10 rounded-xl bg-white/15 dark:bg-emerald-500/10 dark:border dark:border-emerald-400/30 flex items-center justify-center flex-shrink-0 shadow-md dark:shadow-[0_0_12px_rgba(52,211,153,0.2)]">
+            <Cloud
+              size={22}
+              className="text-white dark:text-emerald-300 drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]"
+            />
           </div>
           <span
             className={`font-extrabold text-lg tracking-wide text-white transition-opacity duration-300 ${
@@ -108,7 +115,7 @@ export default function Layout({ children }) {
           </span>
         </div>
 
-        {/* Menu Navigasi */}
+        {/* Menu Navigasi dengan Efek Nyala (Glow) */}
         <nav className="flex-1 px-3 py-4 flex flex-col gap-1.5 overflow-y-auto overflow-x-hidden">
           {NAV.map((n) => {
             const Icon = n.icon;
@@ -120,11 +127,14 @@ export default function Layout({ children }) {
                 title={isCollapsed ? n.label : ""}
                 className={`flex items-center gap-4 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   active
-                    ? "bg-white/20 text-white shadow-lg scale-[1.02]"
+                    ? "bg-white/20 dark:bg-emerald-950/80 text-emerald-100 dark:text-emerald-400 shadow-lg shadow-emerald-900/30 dark:shadow-[0_0_15px_rgba(16,185,129,0.15)] border border-emerald-500/30 scale-[1.02]"
                     : "text-emerald-100/70 hover:bg-white/10 hover:text-white"
                 }`}
               >
-                <Icon size={22} className="flex-shrink-0" />
+                <Icon
+                  size={22}
+                  className={`flex-shrink-0 ${active ? "drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]" : ""}`}
+                />
                 <span
                   className={`transition-opacity duration-300 ${
                     isCollapsed
@@ -155,7 +165,7 @@ export default function Layout({ children }) {
         </div>
 
         {/* Bagian Bawah: Foto Profil & Logout */}
-        <div className="p-2.5 m-2.5 rounded-2xl bg-black/20 backdrop-blur-md border border-white/10 flex items-center gap-3 transition-all duration-200 hover:bg-black/30 overflow-hidden whitespace-nowrap">
+        <div className="p-2.5 m-2.5 rounded-2xl bg-black/20 dark:bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-3 transition-all duration-200 hover:bg-black/30 overflow-hidden whitespace-nowrap">
           <div className="w-10 h-10 rounded-xl bg-white/20 overflow-hidden flex items-center justify-center flex-shrink-0 ring-2 ring-white/20">
             {profile?.avatar_url ? (
               <img
@@ -199,14 +209,14 @@ export default function Layout({ children }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 bg-gray-50 flex flex-col min-h-screen">
+      <main className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-950 flex flex-col min-h-screen transition-colors duration-300">
         <div className="flex-1 px-4 sm:px-8 pt-6 pb-32 max-w-6xl mx-auto w-full">
           {children}
         </div>
       </main>
 
       {/* Bottom Nav Mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex z-40 overflow-x-auto pb-safe pt-2 shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex z-40 overflow-x-auto pb-safe pt-2 shadow-lg">
         {NAV.map((n) => {
           const Icon = n.icon;
           const active = router.pathname === n.href;
@@ -216,8 +226,8 @@ export default function Layout({ children }) {
               href={n.href}
               className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 text-[10px] font-semibold transition-colors ${
                 active
-                  ? "text-emerald-800"
-                  : "text-gray-400 hover:text-gray-600"
+                  ? "text-emerald-800 dark:text-emerald-400"
+                  : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               }`}
             >
               <Icon size={20} />
