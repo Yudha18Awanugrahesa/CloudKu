@@ -11,7 +11,7 @@ function TransactionForm({ initial, onSave, onClose }) {
   const [type, setType] = useState(initial?.type || '');
   const [date, setDate] = useState(initial?.date || todayISO());
   const [category, setCategory] = useState(initial?.category || '');
-  const [nominal, setNominal] = useState(initial?.nominal ?? '0');
+  const [nominal, setNominal] = useState(initial?.nominal ?? '');
   const [description, setDescription] = useState(initial?.description || '');
   const [method, setMethod] = useState(initial?.method || '');
   const [note, setNote] = useState(initial?.note || '');
@@ -113,7 +113,7 @@ export default function Transaksi() {
       <div className="card p-3.5 mb-4 grid grid-cols-2 md:grid-cols-4 gap-2.5">
         <div className="relative col-span-2 md:col-span-1">
           <Search size={14} className="absolute left-2.5 top-2.5 text-gray-400" />
-          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Cari..." className="input-field pl-8" />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="" className="input-field pl-8" />
         </div>
         <select value={fType} onChange={e => setFType(e.target.value)} className="input-field">
           <option value="semua">Semua Jenis</option>
