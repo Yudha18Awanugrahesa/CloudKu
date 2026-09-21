@@ -13,6 +13,9 @@ import {
   Cloud,
   PanelLeftClose,
   PanelLeftOpen,
+  Menu as MenuIcon,
+  Plus,
+  X,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabaseClient";
@@ -30,6 +33,7 @@ const NAV = [
 export default function Layout({ children }) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [profile, setProfile] = useState(() => {
     if (typeof window !== "undefined") {
@@ -215,30 +219,142 @@ export default function Layout({ children }) {
         </div>
       </main>
 
-      {/* Bottom Nav Mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex z-40 overflow-x-auto pb-safe pt-2 shadow-lg transition-colors duration-300">
-        {NAV.map((n) => {
-          const Icon = n.icon;
-          const active = router.pathname === n.href;
-          return (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 text-[10px] font-semibold transition-all duration-300 ${
-                active
-                  ? "text-emerald-800 dark:text-emerald-400 font-bold"
-                  : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              }`}
-            >
-              <Icon
-                size={20}
-                className={`transition-transform duration-300 ${active ? "scale-110" : ""}`}
-              />
-              <span className="truncate max-w-[55px]">{n.label}</span>
-            </Link>
-          );
-        })}
+      {/* Bottom Nav Mobile Modern & Simpel */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex items-center justify-around z-40 pb-safe pt-2 px-2 shadow-2xl transition-colors duration-300 h-16">
+        {/* 1. Dashboard */}
+        <Link
+          href="/dashboard"
+          className={`flex flex-col items-center gap-1 flex-1 text-[10px] font-semibold transition-all duration-300 ${
+            router.pathname === "/dashboard"
+              ? "text-emerald-800 dark:text-emerald-400 font-bold"
+              : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          }`}
+        >
+          <LayoutDashboard
+            size={20}
+            className={router.pathname === "/dashboard" ? "scale-110" : ""}
+          />
+          <span>Beranda</span>
+        </Link>
+
+        {/* 2. Transaksi */}
+        <Link
+          href="/transaksi"
+          className={`flex flex-col items-center gap-1 flex-1 text-[10px] font-semibold transition-all duration-300 ${
+            router.pathname === "/transaksi"
+              ? "text-emerald-800 dark:text-emerald-400 font-bold"
+              : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          }`}
+        >
+          <ArrowLeftRight
+            size={20}
+            className={router.pathname === "/transaksi" ? "scale-110" : ""}
+          />
+          <span>Transaksi</span>
+        </Link>
+
+        {/* 3. Tombol Kamera / Aksi Cepat di Tengah */}
+        <div className="flex-1 flex justify-center -mt-6">
+          <button
+            onClick={() => {
+              // Tempat aksi kamera atau shortcut tambahan nantinya
+              alert("Fitur Kamera segera hadir!");
+            }}
+            className="w-12 h-12 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white flex items-center justify-center shadow-lg shadow-emerald-900/30 transition-transform active:scale-95"
+            title="Kamera / Aksi Cepat"
+          >
+            <Plus size={24} />
+          </button>
+        </div>
+
+        {/* 4. Cash Flow */}
+        <Link
+          href="/cashflow"
+          className={`flex flex-col items-center gap-1 flex-1 text-[10px] font-semibold transition-all duration-300 ${
+            router.pathname === "/cashflow"
+              ? "text-emerald-800 dark:text-emerald-400 font-bold"
+              : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          }`}
+        >
+          <Wallet
+            size={20}
+            className={router.pathname === "/cashflow" ? "scale-110" : ""}
+          />
+          <span>Cash Flow</span>
+        </Link>
+
+        {/* 5. Menu Lainnya (Drawer Toggle) */}
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className={`flex flex-col items-center gap-1 flex-1 text-[10px] font-semibold transition-all duration-300 ${
+            ["/target", "/budget", "/laporan", "/pengaturan"].includes(
+              router.pathname,
+            )
+              ? "text-emerald-800 dark:text-emerald-400 font-bold"
+              : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          }`}
+        >
+          <MenuIcon size={20} />
+          <span>Menu</span>
+        </button>
       </nav>
+
+      {/* Mobile Menu Drawer / Bottom Sheet */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fadeIn"
+            onClick={() => setMobileMenuOpen(false)}
+          ></div>
+
+          {/* Drawer Content */}
+          <div className="relative bg-white dark:bg-gray-900 rounded-t-3xl p-6 shadow-2xl border-t border-gray-200 dark:border-gray-800 animate-slideUp">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-gray-800">
+              <span className="font-bold text-sm text-gray-900 dark:text-gray-100">
+                Menu Lainnya
+              </span>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pb-6">
+              {[
+                { href: "/target", label: "Target", icon: Target },
+                { href: "/budget", label: "Budget", icon: PiggyBank },
+                { href: "/laporan", label: "Laporan", icon: FileBarChart2 },
+                {
+                  href: "/pengaturan",
+                  label: "Pengaturan",
+                  icon: SettingsIcon,
+                },
+              ].map((item) => {
+                const Icon = item.icon;
+                const active = router.pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 p-3.5 rounded-xl border text-xs font-semibold transition-all ${
+                      active
+                        ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500/40 text-emerald-800 dark:text-emerald-400"
+                        : "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/60 text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    <Icon size={18} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
