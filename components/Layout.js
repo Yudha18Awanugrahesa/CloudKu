@@ -92,7 +92,7 @@ export default function Layout({ children }) {
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       {/* Sidebar Desktop dengan Transisi Smooth */}
       <aside
-        className={`hidden md:flex flex-col h-screen sticky top-0 bg-[#064e3b] dark:bg-[#0b1915] text-white shadow-2xl transition-all duration-300 ease-in-out z-30 border-r border-emerald-900/20 dark:border-white/5 ${
+        className={`hidden md:flex flex-col h-screen sticky top-0 bg-[#064e3b] dark:bg-[#0b1915] text-white shadow-2xl transition-all duration-300 ease-in-out z-[60] border-r border-emerald-900/20 dark:border-white/5 ${
           isCollapsed ? "w-20" : "w-64"
         }`}
       >
