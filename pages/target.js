@@ -10,11 +10,25 @@ import { formatIDR, todayISO, daysBetween } from "../lib/format";
 
 function GoalForm({ initial, onSave, onClose }) {
   const [name, setName] = useState(initial?.name || "");
-  const [target, setTarget] = useState(initial?.target ?? "");
-  const [collected, setCollected] = useState(initial?.collected ?? 0);
+
+  // State untuk target nominal dengan format titik
+  const initialTarget = initial?.target ?? "";
+  const [target, setTarget] = useState(initialTarget);
+  const [targetFormatted, setTargetFormatted] = useState(
+    initialTarget ? Number(initialTarget).toLocaleString("id-ID") : "",
+  );
+
+  // State untuk nominal terkumpul dengan format titik
+  const initialCollected = initial?.collected ?? 0;
+  const [collected, setCollected] = useState(initialCollected);
+  const [collectedFormatted, setCollectedFormatted] = useState(
+    initialCollected ? Number(initialCollected).toLocaleString("id-ID") : "",
+  );
+
   const [deadline, setDeadline] = useState(initial?.deadline || "");
   const [description, setDescription] = useState(initial?.description || "");
   const [err, setErr] = useState("");
+
   const submit = () => {
     const t = Number(target),
       cNum = Number(collected);
@@ -31,6 +45,7 @@ function GoalForm({ initial, onSave, onClose }) {
       description: description.trim(),
     });
   };
+
   return (
     <div>
       <label className="label-field">Nama Target</label>
@@ -38,23 +53,41 @@ function GoalForm({ initial, onSave, onClose }) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="input-field mb-3.5"
+        placeholder=""
       />
+
+      {/* Input Target Nominal dengan Titik Otomatis */}
       <label className="label-field">Target Nominal (Rp)</label>
       <input
-        type="number"
-        min="0"
-        value={target}
-        onChange={(e) => setTarget(e.target.value)}
+        type="text"
+        placeholder=""
+        value={targetFormatted}
+        onChange={(e) => {
+          const rawValue = e.target.value.replace(/\D/g, "");
+          setTarget(rawValue);
+          setTargetFormatted(
+            rawValue ? Number(rawValue).toLocaleString("id-ID") : "",
+          );
+        }}
         className="input-field mb-3.5"
       />
+
+      {/* Input Nominal Terkumpul dengan Titik Otomatis */}
       <label className="label-field">Nominal Terkumpul (Rp)</label>
       <input
-        type="number"
-        min="0"
-        value={collected}
-        onChange={(e) => setCollected(e.target.value)}
+        type="text"
+        placeholder=" "
+        value={collectedFormatted}
+        onChange={(e) => {
+          const rawValue = e.target.value.replace(/\D/g, "");
+          setCollected(rawValue);
+          setCollectedFormatted(
+            rawValue ? Number(rawValue).toLocaleString("id-ID") : "",
+          );
+        }}
         className="input-field mb-3.5"
       />
+
       <label className="label-field">Deadline</label>
       <input
         type="date"
@@ -62,14 +95,18 @@ function GoalForm({ initial, onSave, onClose }) {
         onChange={(e) => setDeadline(e.target.value)}
         className="input-field mb-3.5"
       />
+
       <label className="label-field">Deskripsi</label>
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         rows={2}
         className="input-field mb-3.5"
+        placeholder="Deskripsi opsional..."
       />
-      {err && <p className="text-danger text-xs mb-3">{err}</p>}
+
+      {err && <p className="text-danger text-xs mb-3 font-semibold">{err}</p>}
+
       <div className="flex gap-2 justify-end">
         <button onClick={onClose} className="btn-outline">
           Batal
@@ -89,8 +126,10 @@ export default function Target() {
   const [confirmDel, setConfirmDel] = useState(null);
   const [addFundsFor, setAddFundsFor] = useState(null);
   const [fundAmt, setFundAmt] = useState("");
+  const [fundAmtFormatted, setFundAmtFormatted] = useState("");
 
   const load = async () => {
+    if (!user) return;
     const { data } = await supabase
       .from("goals")
       .select("*")
@@ -123,7 +162,9 @@ export default function Target() {
   return (
     <Layout>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-extrabold">Target Keuangan</h2>
+        <h2 className="text-lg font-extrabold text-gray-900 dark:text-white">
+          Target Keuangan
+        </h2>
         <button
           onClick={() => setModal("add")}
           className="btn-primary flex items-center gap-1.5"
@@ -147,7 +188,9 @@ export default function Target() {
             return (
               <div key={g.id} className="card p-4">
                 <div className="flex justify-between items-start mb-1.5">
-                  <div className="font-extrabold text-sm">{g.name}</div>
+                  <div className="font-extrabold text-sm text-gray-900 dark:text-white">
+                    {g.name}
+                  </div>
                   <Badge text={st.text} tone={st.tone} />
                 </div>
                 {g.description && (
@@ -156,13 +199,13 @@ export default function Target() {
                   </div>
                 )}
                 <ProgressBar pct={pct} />
-                <div className="flex justify-between mt-1.5 text-xs text-gray-500">
+                <div className="flex justify-between mt-1.5 text-xs text-gray-500 dark:text-gray-400">
                   <span>
                     {formatIDR(g.collected)} / {formatIDR(g.target)}
                   </span>
-                  <b className="text-gray-900">{pct}%</b>
+                  <b className="text-gray-900 dark:text-white">{pct}%</b>
                 </div>
-                <div className="text-xs text-gray-500 mt-1.5">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
                   Sisa: {formatIDR(Math.max(0, g.target - g.collected))}
                 </div>
                 <div
@@ -177,6 +220,7 @@ export default function Target() {
                     onClick={() => {
                       setAddFundsFor(g);
                       setFundAmt("");
+                      setFundAmtFormatted("");
                     }}
                     className="btn-primary text-xs px-2.5 py-1.5"
                   >
@@ -218,7 +262,7 @@ export default function Target() {
       )}
       {confirmDel && (
         <Modal title="Hapus Target" onClose={() => setConfirmDel(null)}>
-          <p className="text-sm mb-4">
+          <p className="text-sm mb-4 text-gray-700 dark:text-gray-300">
             Yakin hapus target "{confirmDel.name}"?
           </p>
           <div className="flex gap-2 justify-end">
@@ -244,10 +288,16 @@ export default function Target() {
         >
           <label className="label-field">Nominal Tambahan (Rp)</label>
           <input
-            type="number"
-            min="0"
-            value={fundAmt}
-            onChange={(e) => setFundAmt(e.target.value)}
+            type="text"
+            placeholder="Contoh: 50.000"
+            value={fundAmtFormatted}
+            onChange={(e) => {
+              const rawValue = e.target.value.replace(/\D/g, "");
+              setFundAmt(rawValue);
+              setFundAmtFormatted(
+                rawValue ? Number(rawValue).toLocaleString("id-ID") : "",
+              );
+            }}
             className="input-field mb-4"
             autoFocus
           />
